@@ -7,6 +7,7 @@ import httpStatus from './helpers/httpStatus.js'
 import connectDB from './helpers/db.js'
 
 import userRouter from './routes/user.js'
+import codeRouter from './routes/codeExecution.js'
 
 dotenv.config()
 const app = express()
@@ -18,6 +19,7 @@ app.use(cookieParser())
 connectDB()
 
 app.use('/api/v1/users', userRouter)
+app.use('/api/v1/code', codeRouter)
 
 app.get(`/health`, (req, res) => {
 	res.status(httpStatus.OK).send('OK')
