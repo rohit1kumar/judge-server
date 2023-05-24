@@ -1,27 +1,42 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/user.js'
+import httpStatus from '../helpers/httpStatus.js'
 
 export const generateAuthToken = (id) => {
 	return jwt.sign({ _id: id }, process.env.JWT_SECRET)
 }
 
 export const isAuthenticated = async (req, res, next) => {
-	try {
-		const { token } = req.cookies
+	const token = req.cookies?.token || req.headers.authorization?.split(' ')[1]
 
-		if (!token) {
-			//if token is not present in cookies
-			return res.status(401).json({
-				message: 'Please login first'
+	if (!token) {
+		return res.status(httpStatus.UNAUTHORIZED).json({
+			success: false,
+			message: 'Access Denied, No Token Provided'
+		})
+	}
+
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET)
+		req.user = await User.findById(decoded._id)
+		next()
+	} catch (error) {
+		if (error instanceof jwt.JsonWebTokenError) {
+			return res.status(httpStatus.UNAUTHORIZED).json({
+				success: false,
+				message: 'Invalid Token'
+			})
+		} else if (error instanceof jwt.TokenExpiredError) {
+			return res.status(httpStatus.UNAUTHORIZED).json({
+				success: false,
+				message: 'Token Expired'
 			})
 		}
 
-		const decoded = await jwt.verify(token, process.env.JWT_SECRET) //verifying token
-		req.user = await User.findById(decoded._id) //setting user to req.user
-		next()
-	} catch (error) {
-		res.status(500).json({
-			message: error.message
+		console.error(error)
+		return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+			success: false,
+			message: 'Something Went Wrong'
 		})
 	}
 }

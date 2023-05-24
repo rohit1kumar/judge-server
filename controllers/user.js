@@ -105,3 +105,39 @@ export const logoutUser = async (req, res) => {
 		})
 	}
 }
+export const updateUser = async (req, res) => {
+	const { name, email } = req.body
+	const userId = req.user._id
+	const user = {}
+	if (name) user.name = name
+	if (email) user.email = email
+	try {
+		await User.findOneAndUpdate({ _id: userId }, { $set: user }, { new: true })
+		console.log(user)
+		res.status(httpStatus.OK).json({
+			success: true,
+			message: 'User Updated Successfully'
+		})
+	} catch (error) {
+		console.log(error)
+		res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+			success: false,
+			message: 'Something Went Wrong'
+		})
+	}
+}
+export const getLogginUser = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id)
+		res.status(httpStatus.OK).json({
+			success: true,
+			message: 'User Details Fetched Successfully',
+			data: user
+		})
+	} catch (error) {
+		res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+			success: false,
+			message: 'Something Went Wrong'
+		})
+	}
+}
