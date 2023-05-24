@@ -11,7 +11,7 @@ export const registerUser = async (req, res) => {
 		if (user) {
 			return res.status(httpStatus.BAD_REQUEST).json({
 				success: false,
-				message: 'Email already in use'
+				message: 'Email Already In Use'
 			})
 		}
 
@@ -27,16 +27,21 @@ export const registerUser = async (req, res) => {
 			httpOnly: true
 		}
 
-		return res.status(httpStatus.CREATED).cookie('token', token, options).json({
-			success: true,
-			message: 'User registered successfully',
-			token: token
-		})
+		return res
+			.status(httpStatus.CREATED)
+			.cookie('token', token, options)
+			.json({
+				success: true,
+				message: 'User Registered Successfully',
+				data: {
+					token: token
+				}
+			})
 	} catch (err) {
 		console.log(err)
 		return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
 			success: false,
-			message: 'Something went wrong',
+			message: 'Something Went Wrong',
 			error: err.message
 		})
 	}
@@ -49,14 +54,14 @@ export const loginUser = async (req, res) => {
 		if (!user) {
 			return res.status(httpStatus.BAD_REQUEST).json({
 				success: false,
-				message: 'Email does not exist'
+				message: 'Email Does Not Exist'
 			})
 		}
 		const isPasswordMatch = await bcrypt.compare(password, user.password)
 		if (!isPasswordMatch) {
 			return res.status(httpStatus.BAD_REQUEST).json({
 				success: false,
-				message: 'Password does not match'
+				message: 'Password Does Not Match'
 			})
 		}
 		const token = generateAuthToken(user._id)
@@ -64,16 +69,21 @@ export const loginUser = async (req, res) => {
 			expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
 			httpOnly: true
 		}
-		return res.status(httpStatus.OK).cookie('token', token, options).json({
-			success: true,
-			message: 'User logged in successfully',
-			token: token
-		})
+		return res
+			.status(httpStatus.OK)
+			.cookie('token', token, options)
+			.json({
+				success: true,
+				message: 'User Logged In Successfully',
+				data: {
+					token: token
+				}
+			})
 	} catch (err) {
 		console.log(err)
 		return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
 			success: false,
-			message: 'Something went wrong',
+			message: 'Something Went Wrong',
 			error: err.message
 		})
 	}
@@ -86,12 +96,12 @@ export const logoutUser = async (req, res) => {
 			.cookie('token', null, { expires: new Date(Date.now()), httpOnly: true }) //delete the cookie
 			.json({
 				success: true,
-				message: 'User logged out successfully'
+				message: 'User Logged Out Successfully'
 			})
 	} catch (error) {
 		res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
 			success: false,
-			message: 'Something went wrong'
+			message: 'Something Went Wrong'
 		})
 	}
 }

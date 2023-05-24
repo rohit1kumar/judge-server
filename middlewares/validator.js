@@ -1,53 +1,56 @@
 import { body, validationResult } from 'express-validator'
 import httpStatus from '../helpers/httpStatus.js'
 
+// Common validation steps are moved into a function
+const validateEmail = (fieldName) => [
+	body(fieldName)
+		.trim()
+		.notEmpty()
+		.withMessage(
+			`${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`
+		)
+		.bail()
+		.isEmail()
+		.withMessage(
+			`${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is not valid`
+		)
+		.bail()
+		.isString()
+		.withMessage(
+			`${
+				fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+			} must be a string`
+		)
+]
+
+const validatePassword = (fieldName) => [
+	body(fieldName)
+		.trim()
+		.notEmpty()
+		.withMessage(
+			`${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`
+		)
+		.bail()
+		.isString()
+		.withMessage(
+			`${
+				fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+			} must be a string`
+		)
+]
+
 export const registerValidation = () => {
 	return [
-		body('name').trim().not().isEmpty().withMessage('Name is required'),
-		body('email')
-			.trim()
-			.not()
-			.isEmpty()
-			.withMessage('Email is required')
-			.bail()
-			.isEmail()
-			.withMessage('Email is not valid')
-			.bail()
-			.isString()
-			.withMessage('Email must be a string'),
-		body('password')
-			.trim()
-			.not()
-			.isEmpty()
-			.withMessage('Password is required')
-			.bail()
-			.isString()
-			.withMessage('Password must be a string')
+		...validateEmail('email'),
+		...validatePassword('password'),
+		body('name').trim().notEmpty().withMessage('Name is required')
 	]
 }
+
 export const loginValidation = () => {
-	return [
-		body('email')
-			.trim()
-			.not()
-			.isEmpty()
-			.withMessage('Email is required')
-			.bail()
-			.isEmail()
-			.withMessage('Email is not valid')
-			.bail()
-			.isString()
-			.withMessage('Email must be a string'),
-		body('password')
-			.trim()
-			.not()
-			.isEmpty()
-			.withMessage('Password is required')
-			.bail()
-			.isString()
-			.withMessage('Password must be a string')
-	]
+	return [...validateEmail('email'), ...validatePassword('password')]
 }
+
 export const validate = (req, res, next) => {
 	const errors = validationResult(req)
 	if (errors.isEmpty()) {
