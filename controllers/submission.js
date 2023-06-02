@@ -5,9 +5,6 @@ import redisClient from '../helpers/redis.js'
 
 export const submitCode = async (req, res) => {
 	try {
-		// assign uuid to each request to that we can track the request
-		const id = uuid()
-
 		const { code, lang } = req.body
 		if (code === undefined) {
 			return res.status(httpStatus.BAD_REQUEST).json({
@@ -15,6 +12,8 @@ export const submitCode = async (req, res) => {
 				message: 'Empty Code Field'
 			})
 		}
+		// assign uuid to each request to that we can track the request
+		const id = uuid()
 		const data = {
 			id,
 			code,
