@@ -1,5 +1,5 @@
 import express from 'express'
-import { runCode } from '../controllers/codeExecution.js'
+import { submitCode, getSubmissionStatus } from '../controllers/submission.js'
 // import {
 //     registerValidation,
 //     loginValidation,
@@ -9,6 +9,7 @@ import { runCode } from '../controllers/codeExecution.js'
 
 const router = express.Router()
 
-router.post('/run', runCode)
+router.post('/run', submitCode)
+router.get('/status/:id', getSubmissionStatus)
 
 export default router

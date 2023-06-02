@@ -1,13 +1,12 @@
-import express from 'express'
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
+import express from 'express'
 import mongoose from 'mongoose'
 
-import httpStatus from './helpers/httpStatus.js'
 import connectDB from './helpers/db.js'
-
+import httpStatus from './helpers/httpStatus.js'
+import submissionRouter from './routes/submission.js'
 import userRouter from './routes/user.js'
-import codeRouter from './routes/codeExecution.js'
 
 dotenv.config()
 const app = express()
@@ -19,7 +18,7 @@ app.use(cookieParser())
 connectDB()
 
 app.use('/api/v1/users', userRouter)
-app.use('/api/v1/code', codeRouter)
+app.use('/api/v1/codes', submissionRouter)
 
 app.get(`/health`, (req, res) => {
 	res.status(httpStatus.OK).send('OK')

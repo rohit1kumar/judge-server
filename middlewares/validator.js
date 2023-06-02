@@ -1,4 +1,5 @@
 import { body, validationResult } from 'express-validator'
+
 import httpStatus from '../helpers/httpStatus.js'
 
 // Common validation steps are moved into a function
@@ -49,6 +50,25 @@ export const registerValidation = () => {
 
 export const loginValidation = () => {
 	return [...validateEmail('email'), ...validatePassword('password')]
+}
+
+export const codeValidation = () => {
+	return [
+		body('code')
+			.trim()
+			.notEmpty()
+			.withMessage('Code is required')
+			.bail()
+			.isString()
+			.withMessage('Code must be a string'),
+		body('lang')
+			.trim()
+			.notEmpty()
+			.withMessage('Language is required')
+			.bail()
+			.isString()
+			.withMessage('Language must be a string')
+	]
 }
 
 export const validate = (req, res, next) => {
