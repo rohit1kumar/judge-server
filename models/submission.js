@@ -1,23 +1,31 @@
-// import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
-// const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
-// const submissionSchema = new Schema({
-//     userId: {
-//         type: Schema.Types.ObjectId,
-//         ref: 'User',
-//         required: [true, 'User ID is required']
-//     },
-//     langId: {
-//         type: Schema.Types.ObjectId,
-//         ref: 'Lang',
-//         required: [true, 'Language ID is required']
-//     },
-//     code: {
-//         type: String,
-//         required: [true, 'Code is required']
-//     }
-// },
-//     {
-//         timestamps: true
-//     });
+const submissionSchema = new Schema(
+	{
+		userId: {
+			type: Schema.Types.ObjectId,
+			ref: 'User',
+			required: [true, 'User ID is required']
+		},
+		code: {
+			type: String
+		},
+		lang: {
+			type: String
+		},
+		visibliity: {
+			type: String,
+			enum: ['public', 'private'],
+			default: 'private'
+		}
+	},
+	{
+		timestamps: true
+	}
+)
+
+const Submission = mongoose.model('Submission', submissionSchema)
+
+export default Submission
