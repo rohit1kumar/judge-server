@@ -10,6 +10,7 @@ import {
 } from '../controllers/submission.js'
 import { codeValidation, validate } from '../middlewares/validator.js'
 import { isAuthenticated } from '../middlewares/auth.js'
+import { methodNotAllowed } from '../helpers/errorHandler.js'
 
 const router = express.Router()
 
@@ -29,5 +30,7 @@ router.route('/submissions/save').post(isAuthenticated, saveSubmission) // Save 
 router
 	.route('/submissions/:id/status')
 	.get(isAuthenticated, getSubmissionStatus) // Get the status of a specific submission.
+
+router.all('*', methodNotAllowed)
 
 export default router

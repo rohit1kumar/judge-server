@@ -7,6 +7,7 @@ import connectDB from './helpers/db.js'
 import httpStatus from './helpers/httpStatus.js'
 import submissionRouter from './routes/submission.js'
 import userRouter from './routes/user.js'
+import { routeNotFound } from './helpers/errorHandler.js'
 
 dotenv.config()
 const app = express()
@@ -19,6 +20,7 @@ connectDB()
 
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/codes', submissionRouter)
+app.use('*', routeNotFound)
 
 app.get(`/health`, (req, res) => {
 	res.status(httpStatus.OK).send('OK')

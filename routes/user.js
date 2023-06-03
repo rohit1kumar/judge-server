@@ -12,6 +12,7 @@ import {
 	validate
 } from '../middlewares/validator.js'
 import { isAuthenticated } from '../middlewares/auth.js'
+import { methodNotAllowed } from '../helpers/errorHandler.js'
 
 const router = express.Router()
 
@@ -20,5 +21,6 @@ router.post('/register', registerValidation(), validate, registerUser)
 router.post('/login', loginValidation(), validate, loginUser)
 router.post('/logout', logoutUser)
 router.patch('/update', isAuthenticated, updateUser)
+router.all('*', methodNotAllowed)
 
 export default router
