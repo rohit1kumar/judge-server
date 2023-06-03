@@ -137,7 +137,5 @@ async function stopListening(event) {
 	}
 }
 
-process.on('SIGTERM', stopConsuming)
-process.on('SIGINT', stopListening)
-
 export default rabbit
+export { stopConsuming, stopListening }

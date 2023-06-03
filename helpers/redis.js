@@ -53,6 +53,13 @@ class RedisClientService {
 		}
 	}
 
+	async disconnect() {
+		if (this.client) {
+			await this.client.disconnect()
+			this.client = null
+		}
+	}
+
 	async get(key) {
 		try {
 			await this.connect()
