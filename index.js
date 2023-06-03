@@ -48,7 +48,7 @@ app.use('/api/v1/users', userRouter)
 app.use('/api/v1/codes', submissionRouter)
 
 // Health check endpoint
-app.get(`/health`, (req, res) => {
+app.get('/health', (req, res) => {
 	res.status(httpStatus.OK).send('OK')
 })
 
