@@ -2,6 +2,8 @@
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import express from 'express'
+import Sentry from '@sentry/node'
+import cors from 'cors'
 
 // Import custom modules
 import connectDB from './helpers/db.js'
@@ -23,6 +25,20 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use(cors())
+
+Sentry.init({
+	dsn: process.env.SENTRY_DSN,
+	integrations: [
+		// enable HTTP calls tracing
+		new Sentry.Integrations.Http({ tracing: true }),
+		// enable Express.js middleware tracing
+		new Sentry.Integrations.Express({ app }),
+		// Automatically instrument Node.js libraries and frameworks
+		...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()
+	],
+	tracesSampleRate: 1.0
+})
 
 // Connect to the database
 connectDB()
@@ -38,6 +54,11 @@ app.get(`/health`, (req, res) => {
 
 // Handle 404
 app.use('*', routeNotFound)
+
+// Sentry error handler to track errors
+if (process.env.NODE_ENV === 'production') {
+	app.use(Sentry.Handlers.errorHandler())
+}
 
 // Handle errors
 app.use(errorHandler)
