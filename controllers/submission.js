@@ -12,6 +12,14 @@ export const submitCode = async (req, res) => {
 				message: 'Empty Code Field'
 			})
 		}
+		const supportedLangs = ['py', 'js', 'cpp', 'java']
+		if (!supportedLangs.includes(lang)) {
+			return res.status(httpStatus.BAD_REQUEST).json({
+				success: false,
+				message: 'Unsupported Language'
+			})
+		}
+
 		// assign uuid to each request to that we can track the request
 		const id = uuid()
 		const data = {
@@ -20,6 +28,11 @@ export const submitCode = async (req, res) => {
 			lang
 		}
 		await rabbit.sendToQueue('MS_TM_Q', data)
+		const resp = {
+			status: 'pending',
+			result: null
+		}
+		await redisClient.set(id, JSON.stringify(resp))
 		return res.status(httpStatus.ACCEPTED).json({
 			success: true,
 			message: 'Code execution pending',
@@ -42,7 +55,7 @@ export const getSubmissionStatus = async (req, res) => {
 		if (result === null) {
 			return res.status(httpStatus.NOT_FOUND).json({
 				success: false,
-				message: 'Submission not found'
+				message: 'Submission not found, or result expired'
 			})
 		}
 		return res.status(httpStatus.OK).json({
