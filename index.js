@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import Sentry from '@sentry/node'
 import cors from 'cors'
+import morgan from 'morgan'
 
 // Import custom modules
 import connectDB from './helpers/db.js'
@@ -22,6 +23,7 @@ dotenv.config()
 // Setup Express app
 const app = express()
 
+app.use(morgan('tiny'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
