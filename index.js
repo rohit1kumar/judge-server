@@ -15,7 +15,7 @@ import errorHandler, {
 	gracefulShutdown
 } from './helpers/errorHandler.js'
 import submissionRouter from './routes/submission.js'
-import userRouter from './routes/user.js'
+// import userRouter from './routes/user.js'
 
 // Setup dotenv
 dotenv.config()
@@ -46,7 +46,7 @@ Sentry.init({
 connectDB()
 
 // Define routes
-app.use('/api/v1/users', userRouter)
+// app.use('/api/v1/users', userRouter)
 app.use('/api/v1/codes', submissionRouter)
 
 // Health check endpoint
